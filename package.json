@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "description": "media converter telegram bot using ffmpeg",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "watch": "nodemon app.js"
   },
   "author": "c-marv",
   "license": "ISC",
@@ -13,5 +14,8 @@
     "express": "^4.17.1",
     "telegraf": "^4.0.2",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

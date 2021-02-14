@@ -2,6 +2,11 @@
 
 Basic telegram bot to convert url images or videos to other formats: `jpg, png, gif, mp4`. Mainly the `webp` and `webm`, because sometimes these are not displayed correctly in Telegram.
 
+### Requirements
+- Nodejs 14.x
+- npm 6.x
+- ffmpeg 4.2.4
+
 ### DotEnv variables
 - **USE_EXPRESS**: Determines if the bot will run using express or not. 
 - **BOT_TOKEN**: Token generated using the official telegram bot [@BotFather](https://t.me/botfather)

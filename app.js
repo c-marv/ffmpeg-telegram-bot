@@ -24,10 +24,10 @@ bot.use(middlewares.auth);
 bot.use(middlewares.deleteCommandMessage);
 
 bot.start(commands.welcome);
-bot.command('jpg', commands.jpg);
-bot.command('mp4', commands.mp4);
-bot.command('gif', commands.gif);
-bot.command('png', commands.png);
+bot.command('jpg', commands.convert);
+bot.command('mp4', commands.convert);
+bot.command('gif', commands.convert);
+bot.command('png', commands.convert);
 
 if (USE_EXPRESS) {
     app.get('/', async (req, res) => {

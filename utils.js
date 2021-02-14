@@ -79,7 +79,10 @@ module.exports.parseCommand = (command) => {
     if (params.length < 2) {
         throw new Error('pass a image url as argument');
     }
-    return params;
+    return [
+        params[0].substring(1),
+        params[1]
+    ];
 };
 
 module.exports.convertFile = async (url, toFormat) => {
@@ -87,27 +90,22 @@ module.exports.convertFile = async (url, toFormat) => {
         throw new Error('pass a valid url image');
     }
     // download file locally
-    let imagePath;
+    let downloadFilePath;
     try {
-        imagePath = await this.downloadFile(url);
+        downloadFilePath = await this.downloadFile(url);
     } catch (err) {
         throw new Error('error to download image');
     }
     // convert file using ffmpeg
-    let convertedImagePath;
+    let convertedFilePath;
     try {
-        convertedImagePath = await this.ffmpeg(imagePath, toFormat);
+        convertedFilePath = await this.ffmpeg(downloadFilePath, toFormat);
     } catch (err) {
-        await this.deleteFile(imagePath);
+        await this.deleteFile(downloadFilePath);
         throw new Error('error to convert image');
     }
-    // Read temp file
-    let fileStream = Fs.createReadStream(imagePath);
-    // cleanup temp files
-    await this.deleteFile(imagePath);
-    await this.deleteFile(convertedImagePath);
-
-    return fileStream;
+    await this.deleteFile(downloadFilePath);
+    return convertedFilePath;
 };
 
 module.exports.ensureTempFolder = () => {
