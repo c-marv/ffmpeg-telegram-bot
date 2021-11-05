@@ -1,9 +1,9 @@
 require('dotenv').config()
-const {Telegraf} = require('telegraf');
+const { Telegraf } = require('telegraf');
 const express = require('express');
 const middlewares = require('./middlewares');
 const commands = require('./commands');
-const {checkFFMPEG, ensureTempFolder} = require('./utils');
+const { checkFFMPEG, ensureTempFolder } = require('./utils');
 
 app = express();
 ensureTempFolder();
@@ -19,25 +19,27 @@ if (USE_EXPRESS) {
     app.use(bot.webhookCallback(`/bot${BOT_TOKEN}`));
 }
 
+bot.use(middlewares.handlingError);
 bot.use(middlewares.logResponseTime);
 bot.use(middlewares.auth);
 bot.use(middlewares.deleteCommandMessage);
 
 bot.start(commands.welcome);
-bot.command('jpg', commands.convert);
-bot.command('mp4', commands.convert);
-bot.command('gif', commands.convert);
-bot.command('png', commands.convert);
+bot.command('jpg', commands.jpg);
+bot.command('mp4', commands.mp4);
+bot.command('gif', commands.gif);
+bot.command('png', commands.png);
 
 if (USE_EXPRESS) {
     app.get('/', async (req, res) => {
-        let ffmpegIsInstalled = await checkFFMPEG();
+        const ffmpegIsInstalled = await checkFFMPEG();
         res.send(`ffmpeg telegram bot status: UP, ffmpeg is installed: ${ffmpegIsInstalled ? 'YES' : 'NO'}`);
     });
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
 } else {
+    console.log('ffmpeg bot is running...');
     bot.launch();
 
     process.once('SIGINT', () => bot.stop('SIGINT'))

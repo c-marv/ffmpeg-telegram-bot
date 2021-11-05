@@ -1,35 +1,77 @@
-const utils = require('./utils');
+const { parseCommand, convertFile, deleteFile } = require('./utils');
 
-const AVAILABLE_COMMANDS = {
+const FILE_FORMATS = {
     JPG: 'jpg',
     PNG: 'png',
     MP4: 'mp4',
-    GIF: 'gif'
 };
 
-module.exports.welcome = (ctx) => {
+/**
+ * Convert incomming command from telegram to format file
+ * @param {import('telegraf').Context} ctx 
+ * @param {string} format 
+ */
+ const convert = async (ctx, format) => {
+    const [command, url] = parseCommand(ctx.message.text);
+    return await convertFile(url, format);
+}
+
+/**
+ * Command to show welcome message
+ * @param {import('telegraf').Context} ctx 
+ */
+const welcome = async (ctx) => {
     return ctx.reply(`Welcome ${ctx.from.first_name} to ffmpeg bot`);
 };
 
-module.exports.convert = async (ctx) => {
-    let [command, url] = utils.parseCommand(ctx.message.text);
-    let convertedFilePath;
-    try {
-        convertedFilePath = await utils.convertFile(url, command);
-    } catch (err) {
-        return ctx.reply(err.message);
-    }
-    const reply = {
-        source: convertedFilePath
-    };
-    if (command == AVAILABLE_COMMANDS.JPG || command == AVAILABLE_COMMANDS.PNG) {
-        ctx.replyWithPhoto(reply);
-    } else if (command == AVAILABLE_COMMANDS.MP4) {
-        ctx.replyWithVideo(reply);
-    } else if (command == AVAILABLE_COMMANDS.GIF) {
-        ctx.replyWithAnimation(reply);
-    } else {
-        ctx.reply('Unhandled convertion format');
-    }
-    await utils.deleteFile(convertedFilePath);
+/**
+ * Command to convert to mp4
+ * @param {import('telegraf').Context} ctx 
+ */
+const mp4 = async (ctx) => {
+    const convertedFilePath = await convert(ctx, FILE_FORMATS.MP4);
+    await ctx.replyWithVideo({
+        source: convertedFilePath,
+    });
+    await deleteFile(convertedFilePath);
+}
+
+/**
+ * Command to convert to jpg
+ * @param {import('telegraf').Context} ctx 
+ */
+const jpg = async (ctx) => {
+    const convertedFilePath = await convert(ctx, FILE_FORMATS.JPG);
+    await ctx.replyWithPhoto({
+        source: convertedFilePath,
+    });
+    await deleteFile(convertedFilePath);
+}
+
+/**
+ * Command to convert to png
+ * @param {import('telegraf').Context} ctx 
+ */
+const png = async (ctx) => {
+    const convertedFilePath = await convert(ctx, FILE_FORMATS.PNG);
+    await ctx.replyWithPhoto({
+        source: convertedFilePath,
+    });
+    await deleteFile(convertedFilePath);
+}
+
+/**
+ * Command to convert to gif
+ * @param {import('telegraf').Context} ctx 
+ */
+const gif = async (ctx) => {
+    const convertedFilePath = await convert(ctx, FILE_FORMATS.MP4);
+    await ctx.replyWithAnimation({
+        source: convertedFilePath,
+    });
+    await deleteFile(convertedFilePath);
+}
+
+module.exports = {
+    welcome, mp4, jpg, png, gif,
 }

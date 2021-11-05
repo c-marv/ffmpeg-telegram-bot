@@ -1,17 +1,27 @@
 const Fs = require('fs');
 const Path = require('path');
 const Axios = require('axios');
-const {v4: uuidv4} = require('uuid');
-const {exec} = require('child_process');
+const { v4: uuidv4 } = require('uuid');
+const { exec } = require('child_process');
 
-module.exports.isValidUrl = (url) => {
+/**
+ * Validate if the url is valid
+ * @param {string} url 
+ * @returns {boolean}
+ */
+const isValidUrl = (url) => {
     if (!url) {
         return false;
     }
     return url.match(/^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/);
 };
 
-module.exports.downloadFile = async (url) => {
+/**
+ * Download a file from an url
+ * @param {string} url 
+ * @returns {Promise<string>} 
+ */
+const downloadFile = async (url) => {
     let response;
     try {
         response = await Axios({
@@ -39,7 +49,12 @@ module.exports.downloadFile = async (url) => {
     });
 };
 
-module.exports.execShellCommand = (commmand) => {
+/**
+ * Execute a command
+ * @param {string} commmand 
+ * @returns {Promise<string>}
+ */
+const execShellCommand = (commmand) => {
     return new Promise((resolve, reject) => {
         exec(commmand, (err, stdout, stderr) => {
             if (err) {
@@ -50,76 +65,114 @@ module.exports.execShellCommand = (commmand) => {
     });
 };
 
-module.exports.ffmpeg = async (filePath, toFormat) => {
+/**
+ * Execute a ffmpeg to convert a file (file path) to another format file
+ * @param {string} filePath 
+ * @param {string} toFormat 
+ * @returns {Promise<string>}
+ */
+const ffmpeg = async (filePath, toFormat) => {
     const newFilePath = Path.resolve(__dirname, 'tmp', `${uuidv4()}.${toFormat}`);
     if (!Fs.existsSync(filePath)) {
         throw new Error(`${filePath} file not found`);
     }
     try {
-        await this.execShellCommand(`ffmpeg -i ${filePath} ${newFilePath}`);
+        await execShellCommand(`ffmpeg -i ${filePath} ${newFilePath}`);
     } catch (err) {
         throw new Error(`error converting file [${err}]`);
     }
     return newFilePath;
 };
 
-module.exports.deleteFile = async (path) => {
+/**
+ * Deletes the from path parameter
+ * @param {string} path 
+ */
+const deleteFile = async (path) => {
     new Promise((resolve, reject) => {
         Fs.unlink(path, (err) => {
             if (err) {
                 console.warn(`error to delete file ${path}`);
+                return reject(err);
             };
             return resolve();
         });
     });
 };
 
-module.exports.parseCommand = (command) => {
-    let params = command.split(/ +/);
-    if (params.length < 2) {
-        throw new Error('pass a image url as argument');
+/**
+ * Parse command from string to command and file url
+ * @param {string} command 
+ * @returns {Array}
+ */
+const parseCommand = (command) => {
+    const params = command.split(/ +/);
+    if (params.length !== 2) {
+        throw new Error('You must pass the command and the image url, eg: /mp4 https://foo.bar/baz.webm');
     }
-    return [
-        params[0].substring(1),
-        params[1]
-    ];
+    return params;
 };
 
-module.exports.convertFile = async (url, toFormat) => {
-    if (!this.isValidUrl(url)) {
+/**
+ * Converts a file (url) to another format file
+ * @param {string} url 
+ * @param {string} toFormat 
+ * @returns {Promise<string>}
+ */
+const convertFile = async (url, toFormat) => {
+    if (!isValidUrl(url)) {
         throw new Error('pass a valid url image');
     }
     // download file locally
     let downloadFilePath;
     try {
-        downloadFilePath = await this.downloadFile(url);
+        downloadFilePath = await downloadFile(url);
     } catch (err) {
         throw new Error('error to download image');
     }
     // convert file using ffmpeg
     let convertedFilePath;
     try {
-        convertedFilePath = await this.ffmpeg(downloadFilePath, toFormat);
+        convertedFilePath = await ffmpeg(downloadFilePath, toFormat);
     } catch (err) {
-        await this.deleteFile(downloadFilePath);
+        await deleteFile(downloadFilePath);
         throw new Error('error to convert image');
     }
-    await this.deleteFile(downloadFilePath);
+    await deleteFile(downloadFilePath);
     return convertedFilePath;
 };
 
-module.exports.ensureTempFolder = () => {
+/**
+ * Check or create the temporal folder `/tmp`
+ */
+const ensureTempFolder = () => {
     if (!Fs.existsSync('./tmp')) {
         Fs.mkdirSync('./tmp');
     }
 };
 
-module.exports.checkFFMPEG = async () => {
+/**
+ * Checks if ffmpeg is installed
+ * @returns {Promise<boolean>}
+ */
+const checkFFMPEG = async () => {
     try {
-        await this.execShellCommand('ffmpeg -version');
+        await execShellCommand('ffmpeg -version');
         return true;
     } catch (err) {
         console.warn(err);
         return false;
     }
 };
+
+module.exports = {
+    isValidUrl,
+    downloadFile,
+    execShellCommand,
+    ffmpeg,
+    deleteFile,
+    parseCommand,
+    convertFile,
+    ensureTempFolder,
+    checkFFMPEG,
+}
