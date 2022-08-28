@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 export class FileUtils {
   static async delete(filePath: string): Promise<void> {
@@ -11,7 +12,7 @@ export class FileUtils {
   }
 
   static ensureTmpFolder(): void {
-    const tmpPath = '../../tmp';
+    const tmpPath = path.resolve(__dirname, '../../tmp');
     if (!fs.existsSync(tmpPath)) {
       fs.mkdirSync(tmpPath);
     }

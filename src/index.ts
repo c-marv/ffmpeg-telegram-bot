@@ -2,9 +2,11 @@ import {config} from 'dotenv';
 import {Application} from './app';
 import {Bot} from './bot';
 import {Server} from './server';
+import {FileUtils} from './utils';
 
 const initialize = () => {
   config();
+  FileUtils.ensureTmpFolder();
   const USE_EXPRESS = process.env.USE_EXPRESS === 'true';
   const BOT_TOKEN = process.env.BOT_TOKEN || '';
   const PORT = parseInt(process.env.PORT || '');
