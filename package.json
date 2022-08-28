@@ -9,7 +9,7 @@
     "lint": "gts lint",
     "clean": "gts clean",
     "fix": "gts fix",
-    "ngrok": "ngrok http 8080"
+    "ngrok": "ngrok http 3000"
   },
   "author": "c-marv",
   "license": "ISC",
