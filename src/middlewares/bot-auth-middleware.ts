@@ -12,9 +12,8 @@ export class BotAuthMiddleware implements IBotMiddleware {
     return async (context: Context, next) => {
       const username = context.from?.username || null;
       if (!username || !this.allowedUsers.includes(username)) {
-        return await context.reply(
-          "Your user doesn't have permission to use this bot"
-        );
+        console.log(`Unauthorized user is trying to use the bot ${username}`);
+        return;
       }
       await next();
       return;
