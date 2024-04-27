@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: docker.pkg.github.com
-  REPO: c-marv/ffmpeg-telegram-bot
+  REPO: c-marv/ffmpeg-telegram-bot/ffmpeg-telegram-bot
   CONTAINER: ffmpeg-telegram-bot
 
 jobs:
