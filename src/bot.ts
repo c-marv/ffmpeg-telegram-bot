@@ -37,6 +37,7 @@ export class Bot implements IBot {
 
   start(): void {
     this.botClient.launch();
+    console.log('Bot started');
     process.once('SIGINT', () => this.botClient.stop('SIGINT'));
     process.once('SIGTERM', () => this.botClient.stop('SIGTERM'));
   }
