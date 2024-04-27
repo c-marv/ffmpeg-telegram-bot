@@ -1,0 +1,30 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.pkg.github.com
+  REPO: c-marv/ffmpeg-telegram-bot
+  CONTAINER: ffmpeg-telegram-bot
+
+jobs:
+  push_to_registry:
+    name: Push docker image to GitHub Container Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          repository: ${{ env.REPO }}
+          tag_with_ref: true
+          tag_with_sha: true
+          tags: latest
