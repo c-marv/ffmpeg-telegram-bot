@@ -14,7 +14,7 @@ export class GifCommand extends BaseConvertCommand implements IBotCommand {
     return async context => {
       const message = context.message as TelegramMessage;
       if (!message) return;
-      const filePath = await this.convert(message.text, this.getCommand());
+      const filePath = await this.convert(message.text, FILE_FORMATS.MP4);
       await context.replyWithAnimation({
         source: filePath,
       });

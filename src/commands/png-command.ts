@@ -15,7 +15,7 @@ export class PngCommand extends BaseConvertCommand implements IBotCommand {
       const message = context.message as TelegramMessage;
       if (!message) return;
 
-      const filePath = await this.convert(message.text, this.getCommand());
+      const filePath = await this.convert(message.text, FILE_FORMATS.PNG);
       await context.replyWithPhoto({source: filePath});
       await FileUtils.delete(filePath);
     };

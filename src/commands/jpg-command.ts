@@ -14,7 +14,7 @@ export class JpgCommand extends BaseConvertCommand implements IBotCommand {
     return async context => {
       const message = context.message as TelegramMessage;
       if (!message) return;
-      const filePath = await this.convert(message.text, this.getCommand());
+      const filePath = await this.convert(message.text, FILE_FORMATS.JPG);
       await context.replyWithPhoto({source: filePath});
       await FileUtils.delete(filePath);
     };
