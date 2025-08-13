@@ -1,11 +1,13 @@
 import {
+  GetCommand,
   GifCommand,
+  IdCommand,
   JpgCommand,
   Mp4Command,
   PngCommand,
   StartCommand,
 } from './commands';
-import {IBot, IServer} from './interfaces';
+import { IBot, IServer } from './interfaces';
 import {
   BotAuthMiddleware,
   BotDeleteMessageMiddleware,
@@ -50,6 +52,8 @@ export class Application {
       new PngCommand(),
       new Mp4Command(),
       new GifCommand(),
+      new IdCommand(),
+      new GetCommand(),
     ]);
     if (this.useExpress) {
       this.server.start();

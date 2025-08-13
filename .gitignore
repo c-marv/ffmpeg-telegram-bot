@@ -2,3 +2,8 @@ node_modules
 tmp
 .env
 build
+
+# VS Code personal settings (keep launch.json for debugging)
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/extensions.json
