@@ -1,12 +1,19 @@
-import {Telegraf} from 'telegraf';
-import {IBot, IBotCommand, IBotMiddleware} from './interfaces';
+import { Telegraf } from 'telegraf';
+import { IBot, IBotCommand, IBotMiddleware } from './interfaces';
 
 export class Bot implements IBot {
   private botClient: Telegraf;
   private botToken: string;
   constructor(botToken: string) {
     this.botToken = botToken;
-    this.botClient = new Telegraf(botToken);
+    this.botClient = new Telegraf(botToken, {
+      telegram: {
+        agent: new (require('https').Agent)({
+          family: 4, // Force IPv4
+          timeout: 30000
+        })
+      }
+    });
   }
 
   command(command: IBotCommand): void {
