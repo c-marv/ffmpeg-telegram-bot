@@ -3,7 +3,7 @@ import {Update} from 'telegraf/typings/core/types/typegram';
 import {FILE_FORMATS} from '../constants';
 import {IBotCommand} from '../interfaces';
 import {TelegramMessage} from '../types';
-import {FileUtils} from '../utils';
+import {BotUtils, FileUtils} from '../utils';
 import {BaseConvertCommand} from './base-convert-command';
 
 export class Mp4Command extends BaseConvertCommand implements IBotCommand {
@@ -14,7 +14,9 @@ export class Mp4Command extends BaseConvertCommand implements IBotCommand {
     return async context => {
       const message = context.message as TelegramMessage;
       if (!message) return;
-      const filePath = await this.convert(message.text, FILE_FORMATS.MP4);
+      const params = BotUtils.parseCommand(message.text);
+      const quality = params[2];
+      const filePath = await this.convert(message.text, FILE_FORMATS.MP4, quality);
       await context.replyWithVideo({
         source: filePath,
       });

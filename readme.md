@@ -19,6 +19,7 @@ A powerful Telegram bot built with TypeScript that converts media files to diffe
 - **Node.js**: 14.x or higher
 - **Yarn**: Latest stable version (required for package management)
 - **FFmpeg**: 4.2.4 or higher
+- **yt-dlp**: 2026.03.03 or higher
 
 ### Installation
 
